@@ -27,7 +27,7 @@
             android:name=".app.PlayerActivity"
             android:exported="true"
             android:launchMode="singleTop"
-            android:screenOrientation="sensorPortrait" />
+            android:screenOrientation="sensorLandscape" />
 
         <service
             android:name=".player.VrPlaybackService"

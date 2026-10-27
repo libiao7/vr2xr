@@ -8,7 +8,7 @@
   <img src="assets/banner.png" alt="vr2xr" width="100%">
 </p>
 
-**vr2xr is an Android app for watching VR SBS video on XREAL One glasses. It supports VR180 SBS content and focuses on simple, reliable playback with phone-based controls and IMU head tracking.**
+**vr2xr is an Android VR180 SBS player with phone-only side-by-side stereo mode for a mobile VR headset, as well as optional XREAL One external-display playback.**
 
 ---
 
@@ -24,7 +24,8 @@
 
 ## Features
 
-- **XREAL One Compatible**: Live head tracking, connection status, and factory bias correction
+- **Phone VR-box mode**: Play VR180 SBS directly on the phone in landscape orientation, split into left/right eye views; no XR glasses required
+- **XREAL One Compatible**: Optional external-display playback and live head tracking
 - **Flexible Source Input**: Open local files, `http(s)` video URLs, or share media links/files from other Android apps
 - **Guided Setup**: Flat-surface calibration first, then SBS readiness before entering the VR player
 - **In-Player Tracking Controls**: Recalibrate anytime, tune IMU sensitivity, and toggle IMU tracking on or off
@@ -41,24 +42,18 @@
 
 ## Requirements
 
-- XREAL One or XREAL One Pro glasses
 - Android 13+ phone (`minSdk = 33`)
+- A phone VR headset/cardboard viewer is optional for stereoscopic viewing; XREAL One/One Pro is only needed for external-display mode
 - Samsung DeX desktop mode is not supported (use screen mirroring instead)
 
 ## App Guide
 
-1. Connect your XREAL One glasses.
-2. Open a video from file, URL, or share.
-3. In setup step 1, place the glasses on a flat surface and run calibration.
-4. In setup step 2, put the glasses back on and switch `Display > 3D Mode` to `Full SBS`.
-5. Tap `Continue to VR Player` (the app applies Zero View automatically).
-6. Start playback and use phone controls for settings popups, play/pause, 15-second seek buttons, timeline drag/tap seeking, recenter, IMU sensitivity/tracking controls, projection `FOV` tuning, and continuous touchpad view drag.
+1. Open a local video, paste an `http(s)` URL, or share a video into the app.
+2. The player opens in landscape and renders the left and right views from a VR180 SBS source on the phone screen.
+3. Put the phone into a compatible VR viewer and align the two screen halves with your eyes.
+4. Use the on-screen touch area to adjust the viewing direction; use playback controls to pause, seek, and scrub the timeline.
 
-Samsung DeX warning: DeX desktop mode is not supported for playback. If DeX is on, turn it off and use screen mirroring.
-
-If glasses are disconnected, playback pauses and waits for glasses output to return.
-
-Phone-only playback is intentionally not supported. The app also does not change SBS mode on your glasses; SBS mode stays user/device controlled.
+For VR180 SBS input, each eye is sampled from its corresponding half of the source video. Phone-only playback does not require XR hardware or IMU calibration.
 
 ## Video Sources
 
