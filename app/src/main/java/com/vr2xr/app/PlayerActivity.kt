@@ -357,7 +357,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun setupControls() {
-        binding.glassesSettingsButton.setOnClickListener { showGlassesSettingsPopup() }
+        binding.glassesSettingsButton.visibility = View.GONE
         binding.projectionSettingsButton.setOnClickListener { showProjectionSettingsPopup() }
         binding.seekBackButton.setOnClickListener { seekBy(-SEEK_INTERVAL_MS) }
         binding.playPauseButton.setOnClickListener { togglePlayPause() }
@@ -1029,6 +1029,7 @@ class PlayerActivity : AppCompatActivity() {
             externalDisplayId = displayController.currentPresentationDisplay()?.displayId
                 ?: externalPresentation?.display?.displayId,
             externalSurfaceReady = externalSurface != null,
+            internalSurfaceReady = internalSurface != null,
             activeRoute = routeBinding.activeRoute,
             activeSurfaceBound = routeBinding.activeSurface != null
         )
@@ -1045,13 +1046,16 @@ class PlayerActivity : AppCompatActivity() {
             RouteTarget.EXTERNAL -> {
                 externalSurfaceRebound = bindSurface(externalSurface, ActiveRoute.EXTERNAL)
             }
+            RouteTarget.INTERNAL -> {
+                externalSurfaceRebound = bindSurface(internalSurface, ActiveRoute.INTERNAL)
+            }
             RouteTarget.HOLD_CURRENT -> Unit
             RouteTarget.NONE -> {
                 playbackSession.pauseForInterruption()
                 clearActiveSurface()
             }
         }
-        if (routeState is DisplayRouteState.ExternalActive) {
+        if (routeState is DisplayRouteState.ExternalActive || routeState is DisplayRouteState.InternalActive) {
             if (externalSurfaceRebound) {
                 playbackSession.showPausedFrameIfExpected()
             }
@@ -1121,7 +1125,8 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun renderRouteStatus() {
-        binding.videoSurface.visibility = View.INVISIBLE
+        binding.videoSurface.visibility =
+            if (routeState is DisplayRouteState.InternalActive) View.VISIBLE else View.INVISIBLE
     }
 
     private fun updateDiagnostics() {
@@ -1187,13 +1192,11 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun runRecenter() {
-        if (latestSessionState !is XrSessionState.Streaming) {
-            errors.show(getString(R.string.tracking_recenter_requires_streaming))
-            return
-        }
         applyRuntimePose(runtimePoseController.resetTouchpadBias())
         resetTouchpadIndicator(animate = false)
-        runZeroView()
+        if (latestSessionState is XrSessionState.Streaming) {
+            runZeroView()
+        }
     }
 }
 
