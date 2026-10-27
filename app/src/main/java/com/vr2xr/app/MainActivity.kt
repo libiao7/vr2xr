@@ -77,8 +77,9 @@ class MainActivity : AppCompatActivity() {
             showRequirementsModal()
         }
 
-        renderConnectionStatusUi(ConnectionStatusUi.CHECKING)
-        setRuntimeStatus(getString(R.string.status_glasses_required))
+        binding.xrealStatusRow.visibility = View.GONE
+        binding.requirementsHelpButton.visibility = View.GONE
+        setRuntimeStatus("VR180 SBS · 手机 VR 盒子模式")
         pendingResumeRequest = isExplicitResumeRequest(intent)
         maybeHandleInboundIntent(intent)
         maybeResumeActivePlaybackSession(consumeOnMiss = false)
@@ -86,7 +87,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        startConnectionProbeLoop()
         maybeResumeActivePlaybackSession(consumeOnMiss = true)
     }
 
@@ -113,16 +113,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun handleResolvedSource(source: SourceDescriptor) {
-        lifecycleScope.launch {
-            val probe = trackingManager.probeConnection()
-            renderConnectionStatus(probe)
-            if (probe.connected) {
-                launchTrackingSetup(source)
-            } else {
-                setRuntimeStatus(getString(R.string.status_glasses_required))
-                Toast.makeText(this@MainActivity, R.string.toast_glasses_required, Toast.LENGTH_SHORT).show()
-            }
-        }
+        launchPlayer(source)
     }
 
     private fun launchPlayer(source: SourceDescriptor, resumeExisting: Boolean = false) {
