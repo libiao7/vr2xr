@@ -1125,8 +1125,13 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun renderRouteStatus() {
+        // Keep the internal GLSurfaceView visible while there is no active external route.
+        // If it starts as INVISIBLE, Android may never create its Surface, so the renderer
+        // cannot produce the SurfaceTexture Surface needed by ExoPlayer for phone playback.
+        val externalRouteActive = routeState is DisplayRouteState.ExternalActive ||
+            routeState is DisplayRouteState.ExternalPending
         binding.videoSurface.visibility =
-            if (routeState is DisplayRouteState.InternalActive) View.VISIBLE else View.INVISIBLE
+            if (externalRouteActive) View.INVISIBLE else View.VISIBLE
     }
 
     private fun updateDiagnostics() {
