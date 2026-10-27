@@ -12,6 +12,7 @@ class DisplayRouteStateMachineTest {
             DisplayRouteSnapshot(
                 externalDisplayId = 7,
                 externalSurfaceReady = true,
+                internalSurfaceReady = false,
                 activeRoute = ActiveRoute.NONE,
                 activeSurfaceBound = true
             )
@@ -27,6 +28,7 @@ class DisplayRouteStateMachineTest {
             DisplayRouteSnapshot(
                 externalDisplayId = 7,
                 externalSurfaceReady = false,
+                internalSurfaceReady = false,
                 activeRoute = ActiveRoute.EXTERNAL,
                 activeSurfaceBound = true
             )
@@ -42,6 +44,7 @@ class DisplayRouteStateMachineTest {
             DisplayRouteSnapshot(
                 externalDisplayId = 7,
                 externalSurfaceReady = false,
+                internalSurfaceReady = false,
                 activeRoute = ActiveRoute.NONE,
                 activeSurfaceBound = true
             )
@@ -52,11 +55,28 @@ class DisplayRouteStateMachineTest {
     }
 
     @Test
+    fun internalDisplayRoutesToPhoneWhenNoExternalDisplayExists() {
+        val decision = machine.decide(
+            DisplayRouteSnapshot(
+                externalDisplayId = null,
+                externalSurfaceReady = false,
+                internalSurfaceReady = true,
+                activeRoute = ActiveRoute.NONE,
+                activeSurfaceBound = false
+            )
+        )
+
+        assertEquals(DisplayRouteState.InternalActive, decision.state)
+        assertEquals(RouteTarget.INTERNAL, decision.target)
+    }
+
+    @Test
     fun noOutputWhenExternalDisplayIsGone() {
         val decision = machine.decide(
             DisplayRouteSnapshot(
                 externalDisplayId = null,
                 externalSurfaceReady = false,
+                internalSurfaceReady = false,
                 activeRoute = ActiveRoute.EXTERNAL,
                 activeSurfaceBound = true
             )
