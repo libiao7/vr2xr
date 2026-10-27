@@ -2,24 +2,28 @@ package com.vr2xr.display
 
 sealed interface DisplayRouteState {
     data object NoOutput : DisplayRouteState
+    data object InternalActive : DisplayRouteState
     data class ExternalPending(val displayId: Int) : DisplayRouteState
     data class ExternalActive(val displayId: Int) : DisplayRouteState
 }
 
 enum class ActiveRoute {
     NONE,
+    INTERNAL,
     EXTERNAL
 }
 
 enum class RouteTarget {
     NONE,
     HOLD_CURRENT,
+    INTERNAL,
     EXTERNAL
 }
 
 data class DisplayRouteSnapshot(
     val externalDisplayId: Int?,
     val externalSurfaceReady: Boolean,
+    val internalSurfaceReady: Boolean,
     val activeRoute: ActiveRoute,
     val activeSurfaceBound: Boolean
 )
@@ -45,16 +49,24 @@ class DisplayRouteStateMachine {
                 target = if (holdCurrent) RouteTarget.HOLD_CURRENT else RouteTarget.NONE
             )
         }
-        return DisplayRouteDecision(
-            state = DisplayRouteState.NoOutput,
-            target = RouteTarget.NONE
-        )
+        return if (snapshot.internalSurfaceReady) {
+            DisplayRouteDecision(
+                state = DisplayRouteState.InternalActive,
+                target = RouteTarget.INTERNAL
+            )
+        } else {
+            DisplayRouteDecision(
+                state = DisplayRouteState.NoOutput,
+                target = RouteTarget.NONE
+            )
+        }
     }
 }
 
 fun DisplayRouteState.asDebugLabel(): String {
     return when (this) {
         DisplayRouteState.NoOutput -> "no-output"
+        DisplayRouteState.InternalActive -> "internal-active"
         is DisplayRouteState.ExternalPending -> "external-pending(display=${displayId})"
         is DisplayRouteState.ExternalActive -> "external-active(display=${displayId})"
     }
